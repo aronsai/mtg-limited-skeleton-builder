@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="theme-color" content="#111415">
+  <meta name="description" content="An open card pool. A blank canvas. Build and save your next Magic: The Gathering Limited deck.">
+  <title>Skeleton — Limited Deck Builder</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%23d2ae71' d='m20 2 15 18-15 18L5 20Zm0 8-8 10 8 10 8-10Z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css"><script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Skeleton home"><svg viewBox="0 0 40 44" aria-hidden="true"><path d="M20 2 37 22 20 42 3 22Z M20 11 29 22 20 33 11 22Z M20 2V11 M37 22H29 M20 42V33 M3 22H11"/></svg><span>Skeleton<span class="brand-sub">LIMITED DECK BUILDER</span></span></a>
+    <span class="header-note">An open pool. A little possibility.</span>
+    <button id="open-decks" class="button quiet"><span aria-hidden="true">▱</span> Saved decks <span id="saved-count" class="small-badge">0</span></button>
+  </header>
+  <nav class="mobile-tabs" aria-label="Workspace"><button class="active" data-tab="cards" aria-pressed="true">Card library</button><button data-tab="deck" aria-pressed="false">Your deck <span id="mobile-count">0</span></button></nav>
+  <main class="workspace" data-view="cards">
+    <aside class="library" aria-label="Card library">
+      <div class="library-controls">
+        <div class="section-eyebrow"><span class="status-dot"></span> THE CARD LIBRARY <span class="eyebrow-end">01</span></div>
+        <div class="set-picker">
+          <label class="field-label" for="set-search">EXPLORE A SET</label>
+          <div class="set-search-wrap"><span aria-hidden="true" class="set-symbol">◇</span><input id="set-search" type="search" placeholder="Search set name or code…" autocomplete="off" aria-controls="set-options" aria-expanded="false"><span class="set-chevron" aria-hidden="true">⌄</span></div>
+          <div id="set-options" class="set-options" hidden></div>
+        </div>
+        <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="card-search" type="search" placeholder="Find a card or rules text…" aria-label="Search card name or rules text"><kbd>/</kbd></div>
+        <div class="filter-line"><span class="field-label">COLORS</span><button id="reset-filters" class="text-button">Reset filters</button></div>
+        <div id="color-filters" class="color-filters" aria-label="Filter by color">
+          <button data-color="W" class="mana color-w" aria-label="White" aria-pressed="false">☀</button><button data-color="U" class="mana color-u" aria-label="Blue" aria-pressed="false">◉</button><button data-color="B" class="mana color-b" aria-label="Black" aria-pressed="false">♠</button><button data-color="R" class="mana color-r" aria-label="Red" aria-pressed="false">◆</button><button data-color="G" class="mana color-g" aria-label="Green" aria-pressed="false">♣</button><span class="filter-divider"></span><button data-color="C" class="mana color-c" aria-label="Colorless" aria-pressed="false">◇</button><button data-color="M" class="mana color-m" aria-label="Multicolor" aria-pressed="false">✦</button>
+        </div>
+        <div class="filter-selects">
+          <select id="type-filter" aria-label="Card type"><option value="">All types</option><option>Creature</option><option>Instant</option><option>Sorcery</option><option>Enchantment</option><option>Artifact</option><option>Planeswalker</option><option>Battle</option><option>Land</option></select>
+          <select id="rarity-filter" aria-label="Rarity"><option value="">All rarities</option><option value="common">Common</option><option value="uncommon">Uncommon</option><option value="rare">Rare</option><option value="mythic">Mythic</option><option value="special">Special</option><option value="bonus">Bonus</option></select>
+          <select id="mv-filter" aria-label="Mana value"><option value="">Any mana value</option><option value="0">MV 0</option><option value="1">MV 1</option><option value="2">MV 2</option><option value="3">MV 3</option><option value="4">MV 4</option><option value="5">MV 5</option><option value="6">MV 6</option><option value="7">MV 7+</option></select>
+        </div>
+        <label class="booster-toggle"><input id="booster-filter" type="checkbox"><span class="switch" aria-hidden="true"></span> Booster cards only <span class="help" title="Uses Scryfall’s booster flag within this set. Not exact Play Booster contents; separate bonus sheets are not included." aria-label="Uses Scryfall booster data, not exact Play Booster collation">?</span></label>
+      </div>
+      <div class="list-toolbar"><span id="results-count" aria-live="polite">Loading sets…</span><label>Sort <select id="sort" aria-label="Sort cards"><option value="color">Color</option><option value="name">Name</option><option value="cmc">Mana value</option><option value="rarity">Rarity</option><option value="number">Collector number</option></select></label></div>
+      <div id="card-list" class="card-list" aria-label="Available cards" aria-busy="true"></div>
+      <div class="library-footer"><span class="tiny-diamond">◇</span> Click or drag a card to add it <span class="key-hint">+1</span></div>
+    </aside>
+    <section class="deck-panel" aria-label="Your deck">
+      <div class="deck-heading">
+        <div class="deck-title-group"><div class="section-eyebrow">YOUR NEXT FORTY <span id="deck-set" class="set-code">NO SET</span></div><label class="sr-only" for="deck-name">Deck name</label><input id="deck-name" class="deck-name" placeholder="Untitled deck" value="Untitled deck" maxlength="80"><div id="draft-status" class="draft-status">A fresh start. Make it yours.</div></div>
+        <div class="deck-actions"><button id="clear-deck" class="button quiet" title="Start a new deck">↺ <span>Clear all</span></button><button id="save-as" class="button quiet" title="Save a separate copy">Save as new</button><button id="save-deck" class="button primary"><span aria-hidden="true">▱</span> Save deck</button></div>
+      </div>
+      <div class="canvas-toolbar"><div class="canvas-mode"><span aria-hidden="true">▥</span> Mana curve <span class="muted">/</span> Creatures & spells</div><div><span class="canvas-dot"></span> FREE BUILD <span class="muted">· Unlimited copies</span></div></div>
+      <div id="deck-canvas" class="deck-canvas" aria-label="Deck canvas. Drop cards here to add them.">
+        <div id="empty-deck" class="empty-deck"><div class="empty-emblem"><span>◇</span></div><p class="section-eyebrow">EVERY DECK STARTS SOMEWHERE</p><h1>Find your first card.</h1><p>Explore a set. Follow a synergy.<br>Build the deck you want to discover.</p><div class="empty-instruction"><span>←</span> Click a card or drag it here</div><div class="empty-slots" aria-hidden="true"><i></i><i></i><i></i></div></div>
+        <div id="deck-stacks" class="deck-stacks" hidden></div>
+      </div>
+      <div class="basic-land-bar"><div><span class="field-label">BASIC LANDS</span><span class="land-hint">Round out your mana base</span></div><div id="basic-lands" class="basic-land-controls"></div></div>
+      <section class="deck-stats" aria-label="Deck statistics">
+        <div class="total-stat"><div><strong id="total-count">0</strong><span>/ 40</span></div><span id="target-status">CARDS IN DECK</span><div class="target-track"><i id="target-fill"></i></div></div>
+        <div class="type-stats"><div><span class="stat-icon">♜</span><strong id="creature-count">0</strong><span>Creatures</span></div><div><span class="stat-icon">✧</span><strong id="spell-count">0</strong><span>Other spells</span></div><div><span class="stat-icon">△</span><strong id="land-count">0</strong><span>Lands</span></div></div>
+        <div class="curve-stat"><div class="curve-label"><span class="field-label">MANA CURVE</span><span id="average-mv">0.0 avg.</span></div><div id="mana-curve" class="mana-curve" aria-label="Mana curve"></div></div>
+      </section>
+    </section>
+  </main>
+  <footer class="app-footer"><span>SKELETON <span class="muted">/ A space to think in forty cards.</span></span><span>Card data & images by <a href="https://scryfall.com" target="_blank" rel="noreferrer">Scryfall ↗</a> <span class="footer-divider">·</span> Unofficial fan project</span></footer>
+  <div id="storage-warning" class="storage-warning" role="alert" hidden></div>
+  <div id="toast" class="toast" role="status" hidden><span id="toast-text"></span><button id="undo-clear" hidden>Undo</button><button id="dismiss-toast" aria-label="Dismiss notification">×</button></div>
+  <aside id="card-preview" class="card-preview" aria-label="Card preview" hidden><div class="preview-image-wrap"><img id="preview-image" alt=""><div id="preview-fallback" class="preview-fallback" hidden></div></div><div class="preview-info"><strong id="preview-name"></strong><p id="preview-text"></p><div class="preview-buttons"><button id="flip-preview" class="button quiet" hidden>↻ Other face</button><button id="close-preview" class="text-button">Close</button></div></div></aside>
+  <dialog id="decks-dialog"><div class="dialog-heading"><div><p class="section-eyebrow">YOUR COLLECTION OF POSSIBILITIES</p><h2>Saved decks</h2></div><button class="icon-button" data-close-dialog aria-label="Close saved decks">×</button></div><p class="dialog-description">Stored in this browser, ready when inspiration returns.</p><div id="saved-decks-list"></div></dialog>
+  <dialog id="choice-dialog"><form method="dialog"><div class="dialog-heading"><h2 id="choice-title"></h2><button class="icon-button" value="cancel" aria-label="Cancel">×</button></div><p id="choice-description" class="dialog-description"></p><label id="choice-input-label" class="field-label" for="choice-input" hidden>DECK NAME</label><input id="choice-input" maxlength="80" hidden><div id="choice-actions" class="dialog-actions"></div></form></dialog>
+  <noscript><p class="storage-warning">Enable JavaScript to load cards and build decks.</p></noscript>
+</body>
+</html>
